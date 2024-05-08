@@ -51,5 +51,8 @@
 (package! dockerfile-mode)
 (package! emacs-everywhere)
 (package! k8s-mode)
+(package! prettier-js)
 (package! rails-i18n)
+(package! rails-routes)
+(package! sql-indent)
 (package! why-this)
