@@ -11,10 +11,18 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    '("8d8207a39e18e2cc95ebddf62f841442d36fcba01a2a9451773d4ed30b632443" default))
- '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'"))
+ '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
+ '(org-roam-capture-templates
+   '(("d" "default" plain "%?" :target
+      (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
+      :unnarrowed t)
+     ("l" "work lia" plain "%?" :target
+      (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+      :unnarrowed t nil nil))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'customize-variable 'disabled nil)
