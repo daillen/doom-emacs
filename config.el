@@ -53,8 +53,7 @@
 
 ;; Ruby
 (setq
- ruby-indent-level 2
- rubocop-format-on-save t)
+ ruby-indent-level 2)
 
 (after! ruby
   (add-to-list 'hs-special-modes-alist
