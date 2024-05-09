@@ -8,20 +8,26 @@
  user-mail-address "andre.v712@gmail.com")
 
 (setq
- doom-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'light)
- doom-big-font (font-spec :family "Iosevka Term SS04" :size 36)
+ doom-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular)
+ doom-big-font (font-spec :family "Iosevka Term SS04" :size 36 :weight 'regular)
  ;;doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 18)
  )
 
-(setq doom-theme 'doom-monokai-machine)
+(setq doom-theme 'doom-dracula)
 
-(when (eq doom-theme 'doom-one)
+(when (eq doom-theme 'doom-dracula)
   (custom-set-faces
    '(line-number ((t (:inherit default :foreground "gray40" :strike-through nil :underline nil :slant normal :weight normal))))))
 
-(setq
- whitespace-style '(face tabs spaces trailing space-before-tab indentation empty space-after-tab tab-mark space-mark)
- display-line-numbers-type t)
+(after! whitespace-mode
+  (setq
+   whitespace-style '(face tabs spaces trailing space-before-tab indentation empty space-after-tab tab-mark space-mark)
+   display-line-numbers-type t
+   show-trailing-whitespace t)
+  global-whitespace-mode -1)
+
+(after! ligature-mode
+  global-ligature-mode -1)
 
 ;; Web mode
 (setq
@@ -47,7 +53,8 @@
 
 ;; Ruby
 (setq
- ruby-indent-level 2)
+ ruby-indent-level 2
+ rubocop-format-on-save t)
 
 (after! ruby
   (add-to-list 'hs-special-modes-alist
@@ -92,9 +99,6 @@
 (after! org
   (set-face-attribute 'org-link nil
                       :weight 'normal
-                      :background nil)
-  (set-face-attribute 'org-code nil
-                      :foreground "#a9a1e1"
                       :background nil)
   (set-face-attribute 'org-date nil
                       :foreground "#5B6268"
