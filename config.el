@@ -97,7 +97,7 @@
 
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
 
-(after! org
+(after! evil-org
   (set-face-attribute 'org-link nil
                       :weight 'normal
                       :background nil)
@@ -139,7 +139,7 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (setq +magit-hub-features t)
-(setq projectile-project-search-path '("~/dev"))
+(setq projectile-project-search-path '("~/dev" "C:\Dev" "D:\Dev"))
 
 ;; why-this -- git blame on every line
 (after! why-this
