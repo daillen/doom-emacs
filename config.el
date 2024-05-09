@@ -95,6 +95,8 @@
  org-tags-column -80
  org-support-shift-select t)
 
+(map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
+
 (after! org
   (set-face-attribute 'org-link nil
                       :weight 'normal
