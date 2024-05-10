@@ -13,9 +13,9 @@
  ;;doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 18)
  )
 
-(setq doom-theme 'doom-dracula)
+(setq doom-theme 'doom-palenight)
 
-(when (eq doom-theme 'doom-dracula)
+(when (eq doom-theme 'doom-palenight)
   (custom-set-faces
    '(line-number ((t (:inherit default :foreground "gray40" :strike-through nil :underline nil :slant normal :weight normal))))))
 
