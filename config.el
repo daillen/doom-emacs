@@ -139,7 +139,10 @@
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (setq +magit-hub-features t)
-(setq projectile-project-search-path '("~/dev" "C:\Dev" "D:\Dev"))
+
+(if (eq system-type 'windows-nt)
+    (setq projectile-project-search-path '("C:\Dev" "D:\Dev"))
+  (setq projectile-project-search-path '("~/dev")))
 
 ;; why-this -- git blame on every line
 (after! why-this
