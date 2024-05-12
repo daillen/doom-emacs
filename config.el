@@ -9,6 +9,7 @@
 
 (setq confirm-kill-emacs nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(alpha-background . 90))
 
 (setq +popup-margin-width nil)
 (setq-default left-margin-width 1
