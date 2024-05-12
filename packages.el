@@ -56,6 +56,5 @@
 (package! prettier-js)
 (package! rails-i18n)
 (package! rails-routes)
-(package! spacemacs-theme)
 (package! sql-indent)
 (package! websocket)
