@@ -9,8 +9,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '(default))
+ '(custom-safe-themes '(default))
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-roam-capture-templates
    '(("d" "default" plain "%?" :target
@@ -19,10 +18,10 @@
      ("l" "work lia" plain "%?" :target
       (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
       :unnarrowed t nil nil))))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(line-number ((t (:inherit default :foreground "gray40" :strike-through nil :underline nil :slant normal :weight normal)))))
-(put 'customize-variable 'disabled nil)
+ '(region ((t (:extend t :underline "#41a7fc")))))

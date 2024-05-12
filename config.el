@@ -26,20 +26,9 @@
 
 (setq
  doom-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular)
- doom-big-font (font-spec :family "Iosevka Term SS04" :size 36 :weight 'regular)
- ;;doom-font (font-spec :family "JetBrainsMono Nerd Font" :size 18)
- )
+ doom-big-font (font-spec :family "Iosevka Term SS04" :size 36 :weight 'regular))
 
 (setq doom-theme 'doom-palenight)
-
-(when (eq doom-theme 'doom-palenight)
-  (custom-set-faces
-   '(line-number ((t (:inherit default
-                      :foreground "gray40"
-                      :strike-through nil
-                      :underline nil
-                      :slant normal
-                      :weight normal))))))
 
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
