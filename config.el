@@ -10,6 +10,14 @@
 (setq confirm-kill-emacs nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+(setq +popup-margin-width nil)
+(setq-default left-margin-width 1
+              right-margin-width 2)
+
+(setq evil-normal-state-cursor '(box "#41a7fc")
+      evil-insert-state-cursor '(bar "#00AEE8")
+      evil-visual-state-cursor '(hollow "#c75ae8"))
+
 (setq +magit-hub-features t)
 
 (if (featurep :system 'windows)
@@ -40,6 +48,15 @@
         (concat doom-user-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
 
+(use-package! rainbow-mode
+  :hook (((css-mode
+           scss-mode
+           org-mode
+           typescript-mode
+           js-mode
+           emacs-lisp-mode). rainbow-mode))
+  :defer 5)
+
 (setq
  +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
@@ -54,12 +71,18 @@
 (after! ligature-mode
   global-ligature-mode -1)
 
-(setq +popup-margin-width nil)
-(setq-default left-margin-width 1
-              right-margin-width 1)
-
 (after! vertico
   (setq vertico-posframe-poshandler 'posframe-poshandler-frame-bottom-center))
+
+(use-package! treemacs
+  :defer t
+  :bind (:map treemacs-mode-map ("@" . evil-execute-macro))
+  :custom
+  (treemacs-width 45)
+  :config
+  (setq doom-themes-treemacs-theme "doom-colors")
+  (doom-themes-treemacs-config)
+  (doom-themes-org-config))
 
 ;; Line length guides
 (add-hook! emacs-lisp-mode
@@ -88,6 +111,20 @@
   (add-to-list 'auto-mode-alist '("\\.njk\\'" . web-mode)))
 
 ;; Magit
+(use-package! magit
+  :defer t
+  :hook
+  (magit-process-mode . compilation-minor-mode)
+  :config
+  (define-key transient-map        "q" 'transient-quit-one)
+  (define-key transient-edit-map   "q" 'transient-quit-one)
+  (define-key transient-sticky-map "q" 'transient-quit-seq)
+  (add-hook 'magit-process-mode #'disable-magit-hooks)
+  ;; (add-hook 'magit-process-mode-hook #'compilation-mode)
+  (setcdr magit-process-mode-map (cdr (make-keymap)))
+  (set-keymap-parent magit-process-mode-map special-mode-map)
+  (setq magit-process-finish-apply-ansi-colors t))
+
 (after! magit
   (remove-hook 'server-switch-hook 'magit-commit-diff)
   (setq magit-diff-highlight-indentation nil)
@@ -147,7 +184,6 @@
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
 
 (use-package! websocket :after org-roam)
-
 (use-package! org-roam-ui
     :after org-roam
     :config
@@ -208,10 +244,17 @@
 ;;                        :host "localhost:4891"
 ;;                        :models '("Meta-Llama-3-8B-Instruct.Q4_0.gguf"))))
 
-(after! blamer
-  (setq blamer-min-offset 10)
-  (setq blamer-type 'visual)
-  (setq blamer-max-commit-message-length 72)
-  global-blamer-mode 1)
+(use-package! blamer
+  :defer 5
+
+  :custom
+  (blamer-idle-time 0.8)
+  (blamer-min-offset 20)
+  (blamer-type 'visual)
+  (blamer-view 'overlay)
+  (blamer-max-commit-message-length 65)
+
+  :config
+  (global-blamer-mode 1))
 
 (rbenv-use-global)
