@@ -51,6 +51,7 @@
 (package! blamer)
 (package! dockerfile-mode)
 (package! emacs-everywhere)
+(package! gptel)
 (package! k8s-mode)
 (package! org-roam-ui)
 (package! prettier-js)

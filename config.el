@@ -65,9 +65,6 @@
 (add-hook! emacs-lisp-mode
   (setq display-fill-column-indicator-column 80)
   (display-fill-column-indicator-mode))
-(add-hook! org-mode
-  (setq display-fill-column-indicator-column 120)
-  (display-fill-column-indicator-mode))
 (add-hook! ruby-mode
   (setq display-fill-column-indicator-column 120)
   (display-fill-column-indicator-mode))
@@ -197,6 +194,19 @@
                       :weight 'bold)
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
+;; gptel to use chat AI
+;; (use-package! gptel
+;;   :config
+;;   (setq gptel-log-level 'debug)
+;;   (setq gptel-max-tokens 500)
+;;   (setq gptel-default-mode 'org-mode)
+;;   (setq gptel-stream nil)
+;;   (setq gptel-model "Meta-Llama-3-8B-Instruct.Q4_0.gguf")
+;;   (setq gptel-backend (
+;;                        gptel-make-gpt4all "GPT4All"
+;;                        :protocol "http"
+;;                        :host "localhost:4891"
+;;                        :models '("Meta-Llama-3-8B-Instruct.Q4_0.gguf"))))
 
 (after! blamer
   (setq blamer-min-offset 10)
