@@ -9,7 +9,7 @@
 
 (setq confirm-kill-emacs nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha-background . 90))
+(add-to-list 'default-frame-alist '(alpha . 90))
 
 (setq +popup-margin-width nil)
 (setq-default left-margin-width 1
@@ -157,9 +157,39 @@
           keybinding (intern (concat "projectile-rails-custom-find-" name)))))
 
 (after! rspec-mode
+  (defun rspec-verify-all-parallel ()
+    "rails parallel:spec"
+    (interactive)
+    (let ((docker-compose-command (concat rspec-docker-command
+                                          " "
+                                          rspec-docker-container)))
+      (compile
+       (concat docker-compose-command " " "bundle exec rails parallel:spec")
+       t)))
+
+  (defun rspec-run-undercover ()
+    "undercover -c origin/main"
+    (interactive)
+    (let ((docker-compose-command (concat rspec-docker-command
+                                          " "
+                                          rspec-docker-container)))
+      (compile
+       (concat docker-compose-command
+               " "
+               "bundle exec undercover -c origin/main")
+       t)))
+
+  (setq rspec-factory-gem 'factory-bot)
+  (setq rspec-use-docker-when-possible t)
+  (setq rspec-docker-file-name "../../docker-compose.yml")
+  (setq rspec-docker-command "docker compose run --rm")
+  (setq rspec-docker-container "platform-api")
+
   (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.5 :ttl nil :select t)
   (map! :leader :desc "Rspec" "t" #'rspec-mode-keymap)
-  (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed))
+  (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed)
+  (map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
+  (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover))
 
 ;; Org mode
 (setq
@@ -175,12 +205,12 @@
 
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
-    :after org-roam
-    :config
-    (setq org-roam-ui-sync-theme t
-          org-roam-ui-follow t
-          org-roam-ui-update-on-save t
-          org-roam-ui-open-on-start t))
+  :after org-roam
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t))
 
 (after! evil-org
   (set-face-attribute 'org-link nil
