@@ -157,27 +157,33 @@
           keybinding (intern (concat "projectile-rails-custom-find-" name)))))
 
 (after! rspec-mode
-  (defun rspec-verify-all-parallel ()
-    "rails parallel:spec"
-    (interactive)
+  (defun run-command-using-docker (command)
     (let ((docker-compose-command (concat rspec-docker-command
                                           " "
                                           rspec-docker-container)))
       (compile
-       (concat docker-compose-command " " "bundle exec rails parallel:spec")
+       (concat docker-compose-command " " command)
        t)))
+
+  (defun rspec-verify-all-parallel ()
+    "rails parallel:spec"
+    (interactive)
+    (run-command-using-docker "bundle exec rails parallel:spec"))
 
   (defun rspec-run-undercover ()
     "undercover -c origin/main"
     (interactive)
-    (let ((docker-compose-command (concat rspec-docker-command
-                                          " "
-                                          rspec-docker-container)))
-      (compile
-       (concat docker-compose-command
-               " "
-               "bundle exec undercover -c origin/main")
-       t)))
+    (run-command-using-docker "bundle exec undercover -c origin/main"))
+
+  (defun rails-run-migrations ()
+    "rails db:migrate"
+    (interactive)
+    (run-command-using-docker "bundle exec rails db:migrate"))
+
+  (defun rails-dev-console ()
+    "rails development console"
+    (interactive)
+    (run-command-using-docker "bundle exec rails console"))
 
   (setq rspec-factory-gem 'factory-bot)
   (setq rspec-use-docker-when-possible t)
@@ -189,7 +195,8 @@
   (map! :leader :desc "Rspec" "t" #'rspec-mode-keymap)
   (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed)
   (map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
-  (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover))
+  (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover)
+  (map! :leader :desc "Run Rails Migrations" "tg" #'rails-run-migrations))
 
 ;; Org mode
 (setq
