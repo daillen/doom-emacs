@@ -9,15 +9,15 @@
 
 (setq confirm-kill-emacs nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha . 90))
+(add-to-list 'default-frame-alist '(alpha . 95))
 
 (setq +popup-margin-width nil)
 (setq-default left-margin-width 1
               right-margin-width 2)
 
-(setq evil-normal-state-cursor '(box "#41a7fc")
-      evil-insert-state-cursor '(bar "#00AEE8")
-      evil-visual-state-cursor '(hollow "#c75ae8"))
+;; (setq evil-normal-state-cursor '(box "#41a7fc")
+;;       evil-insert-state-cursor '(bar "#00AEE8")
+;;       evil-visual-state-cursor '(hollow "#c75ae8"))
 
 (setq +magit-hub-features t)
 
@@ -29,7 +29,7 @@
  doom-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 36 :weight 'regular))
 
-(setq doom-theme 'doom-palenight)
+(setq doom-theme 'ef-dream)
 
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
@@ -209,6 +209,10 @@
  org-support-shift-select t)
 
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
+
+(use-package! org-modern
+  :init
+  (add-hook 'org-mode-hook 'org-modern-mode))
 
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
