@@ -7,6 +7,7 @@
  user-full-name "Andre Vaillant"
  user-mail-address "andre.v712@gmail.com")
 
+(setq uniquify-buffer-name-style 'forward)
 (setq confirm-kill-emacs nil)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (add-to-list 'default-frame-alist '(alpha . 95))
@@ -50,27 +51,36 @@
 (setq
  +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
-(after! whitespace-mode
+(after! company
+  (setq tab-always-indent 'complete
+        completion-cycle-threshold 3
+        company-idle-delay 0.5
+        company-show-quick-access t
+        company-minimum-prefix-length 2
+        company-tooltip-limit 10
+        company-tooltip-flip-when-above t
+        company-tooltip-align-annotations t))
+
+(after! whitespace
   (setq
    whitespace-style '(face tabs spaces trailing space-before-tab
                       indentation empty space-after-tab tab-mark space-mark)
    display-line-numbers-type t
    show-trailing-whitespace t)
-  global-whitespace-mode -1)
+  global-whitespace-mode 1)
 
-(after! ligature-mode
+(add-hook 'magit-section-mode-hook (lambda () (setq whitespace-style nil)))
+
+(after! ligature
   global-ligature-mode -1)
 
 (after! vertico
   (setq vertico-posframe-poshandler 'posframe-poshandler-frame-bottom-center))
 
-(use-package! treemacs
-  :defer t
-  :bind (:map treemacs-mode-map ("@" . evil-execute-macro))
-  :custom
-  (treemacs-width 45)
-  :config
-  (setq doom-themes-treemacs-theme "doom-colors")
+(after! treemacs
+  (setq treemacs-width 45
+        doom-themes-treemacs-theme "doom-colors")
+
   (doom-themes-treemacs-config)
   (doom-themes-org-config))
 

@@ -17,7 +17,8 @@
       :unnarrowed t)
      ("l" "work lia" plain "%?" :target
       (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
-      :unnarrowed t nil nil))))
+      :unnarrowed t nil nil)))
+ '(package-selected-packages '(why-this)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
