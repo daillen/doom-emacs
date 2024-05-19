@@ -20,6 +20,8 @@
 ;;       evil-insert-state-cursor '(bar "#00AEE8")
 ;;       evil-visual-state-cursor '(hollow "#c75ae8"))
 
+(global-auto-revert-mode 1)
+(global-visual-line-mode 1)
 (setq +magit-hub-features t)
 
 (if (featurep :system 'windows)
@@ -220,9 +222,13 @@
 
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
 
+(defun enable-pretty-org ()
+    (org-modern-mode 1)
+    (+org-pretty-mode 1))
+
 (use-package! org-modern
   :init
-  (add-hook 'org-mode-hook 'org-modern-mode))
+  (add-hook 'org-mode-hook 'enable-pretty-org))
 
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
