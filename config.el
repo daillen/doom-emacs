@@ -9,8 +9,8 @@
 
 (setq uniquify-buffer-name-style 'forward)
 (setq confirm-kill-emacs nil)
+
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-(add-to-list 'default-frame-alist '(alpha . 95))
 
 (setq +popup-margin-width nil)
 (setq-default left-margin-width 1
@@ -276,20 +276,6 @@
                       :height 1.75
                       :weight 'bold)
   (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
-
-;; gptel to use chat AI
-;; (use-package! gptel
-;;   :config
-;;   (setq gptel-log-level 'debug)
-;;   (setq gptel-max-tokens 500)
-;;   (setq gptel-default-mode 'org-mode)
-;;   (setq gptel-stream nil)
-;;   (setq gptel-model "Meta-Llama-3-8B-Instruct.Q4_0.gguf")
-;;   (setq gptel-backend (
-;;                        gptel-make-gpt4all "GPT4All"
-;;                        :protocol "http"
-;;                        :host "localhost:4891"
-;;                        :models '("Meta-Llama-3-8B-Instruct.Q4_0.gguf"))))
 
 (use-package! blamer
   :defer 5
