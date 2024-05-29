@@ -9,6 +9,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(codeium/metadata/api_key "28a890f6-488c-4db9-88cc-389ff10612e2")
  '(custom-safe-themes '(default))
  '(magit-todos-insert-after '(bottom) nil nil "Changed by setter of obsolete option `magit-todos-insert-at'")
  '(org-roam-capture-templates

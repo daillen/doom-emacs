@@ -29,10 +29,10 @@
   (setq projectile-project-search-path '("~/dev")))
 
 (setq
- doom-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular)
- doom-big-font (font-spec :family "Iosevka Term SS04" :size 36 :weight 'regular))
+ doom-font (font-spec :family "Iosevka Term SS04" :size 22 :weight 'regular)
+ doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
-(setq doom-theme 'ef-dream)
+(setq doom-theme 'ef-symbiosis)
 
 (let ((alternatives '("doom-emacs-bw-light.svg"
                       "doom-emacs-flugo-slant_out_purple-small.png"
@@ -56,13 +56,16 @@
 (after! company
   (setq tab-always-indent 'complete
         completion-cycle-threshold 3
-        company-idle-delay 0.5
+        company-idle-delay 0.2
+        company-require-match nil
         company-show-quick-access t
-        company-minimum-prefix-length 2
+        company-minimum-prefix-length 0
         company-tooltip-limit 10
         company-tooltip-flip-when-above t
-        company-tooltip-align-annotations t))
-
+        company-tooltip-align-annotations t
+        company-format-margin-function 'company-text-icons-margin
+        company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
+                            company-preview-frontend)))
 (after! whitespace
   (setq
    whitespace-style '(face tabs spaces trailing space-before-tab
@@ -131,7 +134,11 @@
   (remove-hook 'server-switch-hook 'magit-commit-diff)
   (setq magit-diff-highlight-indentation nil)
   (setq magit-diff-highlight-hunk-body nil)
-  (setq magit-diff-refine-hunk nil))
+  (setq magit-diff-refine-hunk nil)
+
+  (evil-set-initial-state 'magit-status-mode 'emacs))
+
+(map! :leader :desc "Toggle Zen Mode" "z" #'+zen/toggle)
 
 ;; Ruby
 (setq
@@ -169,7 +176,16 @@
           keybinding (intern (concat "projectile-rails-custom-find-" name)))))
 
 (after! rspec-mode
+  (defun rspec-verify-single-file ()
+    "Run the specified example file."
+    (interactive)
+    (rspec--autosave-buffer-maybe)
+    (rspec-run-single-file
+     (rspec-spec-file-for (buffer-file-name))
+     (rspec-core-options)))
+
   (defun run-command-using-docker (command)
+    (interactive)
     (let ((docker-compose-command (concat rspec-docker-command
                                           " "
                                           rspec-docker-container)))
@@ -207,6 +223,7 @@
   (map! :leader :desc "Rspec" "t" #'rspec-mode-keymap)
   (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed)
   (map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
+  (map! :leader :desc "Verify File" "tf" #'rspec-verify-single-file)
   (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover)
   (map! :leader :desc "Run Rails Migrations" "tg" #'rails-run-migrations))
 
@@ -223,8 +240,8 @@
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
 
 (defun enable-pretty-org ()
-    (org-modern-mode 1)
-    (+org-pretty-mode 1))
+  (org-modern-mode 1)
+  (+org-pretty-mode 1))
 
 (use-package! org-modern
   :init
