@@ -52,6 +52,7 @@
 (package! all-the-icons)
 (package! blamer)
 (package! ef-themes)
+(package! gptel)
 (package! k8s-mode)
 (package! org-modern)
 (package! org-roam-ui)

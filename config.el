@@ -64,8 +64,16 @@
         company-tooltip-flip-when-above t
         company-tooltip-align-annotations t
         company-format-margin-function 'company-text-icons-margin
+        company-global-modes '(not org-mode
+                               not erc-mode
+                               circe-mode
+                               message-mode
+                               help-mode
+                               gud-mode
+                               vterm-mode)
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-frontend)))
+
 (after! whitespace
   (setq
    whitespace-style '(face tabs spaces trailing space-before-tab
@@ -306,5 +314,17 @@
 
   :config
   (global-blamer-mode 1))
+
+(use-package! gptel
+  :defer 10
+
+  :custom
+  (gptel-model "llama3:latest")
+  (gptel-backend (gptel-make-ollama "Ollama"
+                   :host "localhost:11434"
+                   :stream t
+                   :models '("llama3:latest")))
+  :config
+  (add-to-list 'gptel-directives '(rails-programming . "You are a large language model and a professional ruby on rails programmer. Use the following versions to write code: ruby 3.x and rails 7.x. Provide code and only code as output without any additional text, prompt or note.")))
 
 (rbenv-use-global)
