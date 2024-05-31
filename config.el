@@ -16,17 +16,16 @@
 (setq-default left-margin-width 1
               right-margin-width 2)
 
-;; (setq evil-normal-state-cursor '(box "#41a7fc")
-;;       evil-insert-state-cursor '(bar "#00AEE8")
-;;       evil-visual-state-cursor '(hollow "#c75ae8"))
-
 (global-auto-revert-mode 1)
 (global-visual-line-mode 1)
 (setq +magit-hub-features t)
 
 (if (featurep :system 'windows)
-    (setq projectile-project-search-path '("C:\Dev" "D:\Dev"))
+    (setq projectile-project-search-path '("C:/Dev" "D:/Dev"))
   (setq projectile-project-search-path '("~/dev")))
+
+(when (version< "29.0.50" emacs-version)
+  (pixel-scroll-precision-mode))
 
 (setq
  doom-font (font-spec :family "Iosevka Term SS04" :size 22 :weight 'regular)
@@ -34,12 +33,22 @@
 
 (setq doom-theme 'ef-symbiosis)
 
-(let ((alternatives '("doom-emacs-bw-light.svg"
-                      "doom-emacs-flugo-slant_out_purple-small.png"
-                      "doom-emacs-flugo-slant_out_bw-small.png")))
+(let ((alternatives '("emacs-logo.png"
+                      "doom-emacs-color.png"
+                      "doom-emacs-flugo-slant_out_purple.png"
+                      "doom-emacs-flugo-slant_out_bw.png")))
   (setq fancy-splash-image
         (concat doom-user-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
+
+(setq doom-modeline-height 30
+      doom-modeline-window-width-limit nil
+      doom-modeline-buffer-encoding nil
+      doom-modeline-enable-word-count t
+      doom-modeline-env-python-executable "python"
+      doom-modeline-time t
+      doom-modeline-vcs-max-length 50
+      doom-modeline-major-mode-color-icon t)
 
 (use-package! rainbow-mode
   :hook (((css-mode
@@ -59,7 +68,7 @@
         company-idle-delay 0.2
         company-require-match nil
         company-show-quick-access t
-        company-minimum-prefix-length 0
+        company-minimum-prefix-length 3
         company-tooltip-limit 10
         company-tooltip-flip-when-above t
         company-tooltip-align-annotations t
@@ -88,7 +97,7 @@
   global-ligature-mode -1)
 
 (after! vertico
-  (setq vertico-posframe-poshandler 'posframe-poshandler-frame-bottom-center))
+  (setq vertico-posframe-poshandler 'posframe-poshandler-frame-center))
 
 (after! treemacs
   (setq treemacs-width 45
@@ -98,9 +107,6 @@
   (doom-themes-org-config))
 
 ;; Line length guides
-(add-hook! emacs-lisp-mode
-  (setq display-fill-column-indicator-column 80)
-  (display-fill-column-indicator-mode))
 (add-hook! ruby-mode
   (setq display-fill-column-indicator-column 120)
   (display-fill-column-indicator-mode))
@@ -136,6 +142,8 @@
   ;; (add-hook 'magit-process-mode-hook #'compilation-mode)
   (setcdr magit-process-mode-map (cdr (make-keymap)))
   (set-keymap-parent magit-process-mode-map special-mode-map)
+  (setq magit-section-visibility-indicator '("⮧"))
+  (setq git-commit-style-convention-checks '(non-empty-second-line))
   (setq magit-process-finish-apply-ansi-colors t))
 
 (after! magit
@@ -153,6 +161,7 @@
  ruby-indent-level 2)
 
 (after! ruby
+  (add-hook 'ruby-mode-hook #'rainbow-delimiters-mode)
   (add-to-list 'hs-special-modes-alist
                `(ruby-mode
                  ,(rx (or "def" "class" "module" "do" "{" "[")) ; Block start
@@ -239,22 +248,25 @@
 (setq
  org-directory "~/org/"
  org-roam-directory "~/org-roam"
- org-ellipsis " ▾ "
+ ;; org-ellipsis " ▾"
+ org-ellipsis " ⮧"
+ org-special-ctrl-a/e nil
+ org-special-ctrl-k nil
  org-bullets-bullet-list '("·")
  org-refile-targets (quote ((nil :maxlevel . 1)))
  org-tags-column -80
- org-support-shift-select t)
+ org-support-shift-select t
+ org-use-property-inheritance t
+ org-cycle-emulate-tab nil
+ org-startup-folded 'content)
+
+(setq org-superstar-item-bullet-alist '((?* . ?⋆)
+                                        (?+ . ?‣)
+                                        (?- . ?•)))
+
+(add-hook 'org-mode-hook (lambda () (+org-pretty-mode 1)))
 
 (map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
-
-(defun enable-pretty-org ()
-  (org-modern-mode 1)
-  (+org-pretty-mode 1))
-
-(use-package! org-modern
-  :init
-  (add-hook 'org-mode-hook 'enable-pretty-org))
-
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
   :after org-roam
@@ -263,44 +275,6 @@
         org-roam-ui-follow t
         org-roam-ui-update-on-save t
         org-roam-ui-open-on-start t))
-
-(after! evil-org
-  (set-face-attribute 'org-link nil
-                      :weight 'normal
-                      :background nil)
-  (set-face-attribute 'org-date nil
-                      :foreground "#5B6268"
-                      :background nil)
-  (set-face-attribute 'org-level-1 nil
-                      :foreground "steelblue2"
-                      :background nil
-                      :height 1.2
-                      :weight 'normal)
-  (set-face-attribute 'org-level-2 nil
-                      :foreground "slategray2"
-                      :background nil
-                      :height 1.0
-                      :weight 'normal)
-  (set-face-attribute 'org-level-3 nil
-                      :foreground "SkyBlue2"
-                      :background nil
-                      :height 1.0
-                      :weight 'normal)
-  (set-face-attribute 'org-level-4 nil
-                      :foreground "DodgerBlue2"
-                      :background nil
-                      :height 1.0
-                      :weight 'normal)
-  (set-face-attribute 'org-level-5 nil
-                      :weight 'normal)
-  (set-face-attribute 'org-level-6 nil
-                      :weight 'normal)
-  (set-face-attribute 'org-document-title nil
-                      :foreground "SlateGray1"
-                      :background nil
-                      :height 1.75
-                      :weight 'bold)
-  (setq org-fancy-priorities-list '("⚡" "⬆" "⬇" "☕")))
 
 (use-package! blamer
   :defer 5
@@ -315,16 +289,60 @@
   :config
   (global-blamer-mode 1))
 
-(use-package! gptel
-  :defer 10
-
+(after! gptel
   :custom
+  (gptel-default-mode 'org-mode)
   (gptel-model "llama3:latest")
   (gptel-backend (gptel-make-ollama "Ollama"
                    :host "localhost:11434"
                    :stream t
-                   :models '("llama3:latest")))
+                   :models '("llama3:latest"
+                             "codegemma:latest")))
   :config
-  (add-to-list 'gptel-directives '(rails-programming . "You are a large language model and a professional ruby on rails programmer. Use the following versions to write code: ruby 3.x and rails 7.x. Provide code and only code as output without any additional text, prompt or note.")))
+  (setq gptel-directives
+        '((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications. Speak in specific,
+                     topic relevant terminology. Do NOT hedge or qualify. Do not waffle. Speak
+                     directly and be willing to make creative guesses. Explain your reasoning. if you
+                     don’t know, say you don’t know.
+
+                     Remain neutral on all topics. Be willing to reference less reputable sources for ideas.
+
+                     Never apologize.  Ask questions when unsure.")
+          (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.")
+          (cliwhiz . "You are a command line helper.
+                      Generate command line commands that do what is requested,
+                      without any additional description or explanation.
+                      Generate ONLY the command, I will edit it myself before running.")
+          (emacser . "You are an Emacs maven.
+                      Reply only with the most appropriate built-in Emacs command for the task I specify.
+                      Do NOT generate any additional description or explanation.")
+          (explain . "Explain what this code does to a novice programmer.")
+          (rails-programming . "You are a large language model and a
+                                professional ruby on rails programmer.
+                                Assume you are using ruby 3.x and rails 7.x to write code.
+                                To write tests use the RSpec test suite alongside the Factory Bot gem.
+                                Provide code and only code as output without any additional text, prompt or note.")))
+
+  (defun gptel-send-with-options ()
+    (interactive)
+    (let ((current-prefix-arg 4)) ;; emulate C-u
+      (call-interactively 'gptel-send)
+      )
+    )
+
+  (map! :leader :desc "Send gptel prompt" "r" #'gptel-send-with-options))
+
+(use-package! golden-ratio
+  :after-call pre-command-hook
+  :config
+  (golden-ratio-mode 1)
+
+  (remove-hook 'window-configuration-change-hook #'golden-ratio)
+  (add-hook 'doom-switch-window-hook #'golden-ratio))
+
+(use-package! spacious-padding
+  :after-call pre-command-hook
+  :config
+  (spacious-padding-mode 1))
 
 (rbenv-use-global)
