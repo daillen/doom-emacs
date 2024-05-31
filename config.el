@@ -289,16 +289,19 @@
   :config
   (global-blamer-mode 1))
 
-(after! gptel
-  :custom
-  (gptel-default-mode 'org-mode)
-  (gptel-model "llama3:latest")
-  (gptel-backend (gptel-make-ollama "Ollama"
-                   :host "localhost:11434"
-                   :stream t
-                   :models '("llama3:latest"
-                             "codegemma:latest")))
+(use-package! gptel
+  :defer 5
   :config
+  (setq gptel-default-mode 'org-mode
+        gptel-model "llama3:latest"
+        gptel-prompt-prefix-alist '((markdown-mode . "###")
+                                    (org-mode . "**")
+                                    (text-mode . "->"))
+        gptel-backend (gptel-make-ollama "Ollama"
+                        :host "localhost:11434"
+                        :stream t
+                        :models '("llama3:latest"
+                                  "codegemma:latest")))
   (setq gptel-directives
         '((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications. Speak in specific,
                      topic relevant terminology. Do NOT hedge or qualify. Do not waffle. Speak
