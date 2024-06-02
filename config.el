@@ -363,6 +363,14 @@
 
 (use-package! spacious-padding
   :after-call pre-command-hook
+  :custom
+  (spacious-padding-widths '( :internal-border-width 15
+                              :header-line-width 4
+                              :mode-line-width 3
+                              :tab-width 4
+                              :right-divider-width 30
+                              :scroll-bar-width 8
+                              :fringe-width 8))
   :config
   (spacious-padding-mode 1))
 
