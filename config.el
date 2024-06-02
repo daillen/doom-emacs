@@ -12,6 +12,7 @@
 
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+(setq scroll-margin 3)
 (setq +popup-margin-width nil)
 (setq-default left-margin-width 1
               right-margin-width 2)
@@ -28,7 +29,7 @@
   (pixel-scroll-precision-mode))
 
 (setq
- doom-font (font-spec :family "Iosevka Term SS04" :size 22 :weight 'regular)
+ doom-font (font-spec :family "Iosevka Term SS04" :size 20 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
 (setq doom-theme 'ef-symbiosis)
@@ -100,7 +101,7 @@
   (setq vertico-posframe-poshandler 'posframe-poshandler-frame-center))
 
 (after! treemacs
-  (setq treemacs-width 45
+  (setq treemacs-width 30
         doom-themes-treemacs-theme "doom-colors")
 
   (doom-themes-treemacs-config)
@@ -130,25 +131,23 @@
   (add-to-list 'auto-mode-alist '("\\.njk\\'" . web-mode)))
 
 ;; Magit
-(use-package! magit
-  :defer t
-  :hook
-  (magit-process-mode . compilation-minor-mode)
-  :config
+(after! magit
   (define-key transient-map        "q" 'transient-quit-one)
   (define-key transient-edit-map   "q" 'transient-quit-one)
   (define-key transient-sticky-map "q" 'transient-quit-seq)
-  (add-hook 'magit-process-mode #'disable-magit-hooks)
-  ;; (add-hook 'magit-process-mode-hook #'compilation-mode)
-  (setcdr magit-process-mode-map (cdr (make-keymap)))
   (set-keymap-parent magit-process-mode-map special-mode-map)
+  (setcdr magit-process-mode-map (cdr (make-keymap)))
+
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+  (add-hook 'magit-process-mode #'disable-magit-hooks)
+  (add-hook 'magit-process-mode-hook #'compilation-mode)
+
   (setq magit-section-visibility-indicator '("⮧"))
   (setq git-commit-style-convention-checks '(non-empty-second-line))
-  (setq magit-process-finish-apply-ansi-colors t))
-
-(after! magit
-  (remove-hook 'server-switch-hook 'magit-commit-diff)
+  (setq magit-process-finish-apply-ansi-colors t)
   (setq magit-diff-highlight-indentation nil)
+  (setq magit-diff-highlight-trailing nil)
+  (setq magit-diff-paint-whitespace nil)
   (setq magit-diff-highlight-hunk-body nil)
   (setq magit-diff-refine-hunk nil)
 
@@ -244,6 +243,14 @@
   (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover)
   (map! :leader :desc "Run Rails Migrations" "tg" #'rails-run-migrations))
 
+;; Improve LSP
+(after! lsp-mode
+  (setq lsp-auto-guess-root t)
+  (setq lsp-solargraph-symbols nil)
+  (setq lsp-solargraph-folding nil)
+  (setq lsp-disabled-clients '(emmet-ls))
+  (setq lsp-ui-sideline-show-code-actions t))
+
 ;; Org mode
 (setq
  org-directory "~/org/"
@@ -259,6 +266,17 @@
  org-use-property-inheritance t
  org-cycle-emulate-tab nil
  org-startup-folded 'content)
+
+(setq org-roam-capture-templates
+  '(("d" "default" plain "%?"
+     :target
+     (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
+     :unnarrowed t)
+
+    ("l" "work lia" plain "%?"
+     :target
+     (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
+     :unnarrowed t nil nil)))
 
 (setq org-superstar-item-bullet-alist '((?* . ?⋆)
                                         (?+ . ?‣)
