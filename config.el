@@ -255,8 +255,7 @@
 (setq
  org-directory "~/org/"
  org-roam-directory "~/org-roam"
- ;; org-ellipsis " ▾"
- org-ellipsis " ⮧"
+ org-ellipsis " ▾"
  org-special-ctrl-a/e nil
  org-special-ctrl-k nil
  org-bullets-bullet-list '("·")
@@ -268,15 +267,15 @@
  org-startup-folded 'content)
 
 (setq org-roam-capture-templates
-  '(("d" "default" plain "%?"
-     :target
-     (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
-     :unnarrowed t)
+      '(("d" "default" plain "%?"
+         :target
+         (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
+         :unnarrowed t)
 
-    ("l" "work lia" plain "%?"
-     :target
-     (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
-     :unnarrowed t nil nil)))
+        ("l" "work lia" plain "%?"
+         :target
+         (file+head "work/lia/%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\12")
+         :unnarrowed t nil nil)))
 
 (setq org-superstar-item-bullet-alist '((?* . ?⋆)
                                         (?+ . ?‣)
