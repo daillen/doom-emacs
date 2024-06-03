@@ -1,4 +1,4 @@
-;;; custom.el ---                                    -*- lexical-binding: t; -*-
+;;; $DOOMDIR/custom.el -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2024  Andre Vaillant
 
