@@ -132,7 +132,7 @@
   (add-hook 'magit-process-mode #'disable-magit-hooks)
   (add-hook 'magit-process-mode-hook #'compilation-mode)
 
-  (setq magit-section-visibility-indicator '("⮧"))
+  (setq magit-section-visibility-indicator '(" ▾"))
   (setq git-commit-style-convention-checks '(non-empty-second-line))
   (setq magit-process-finish-apply-ansi-colors t)
   (setq magit-diff-highlight-indentation nil)
