@@ -46,9 +46,10 @@
       doom-modeline-window-width-limit nil
       doom-modeline-buffer-encoding nil
       doom-modeline-enable-word-count t
-      doom-modeline-env-python-executable "python"
       doom-modeline-time t
       doom-modeline-vcs-max-length 50
+      doom-modeline-env-python-executable "python"
+      doom-modeline-env-ruby-executable "ruby"
       doom-modeline-major-mode-color-icon t)
 
 (use-package! rainbow-mode
@@ -59,9 +60,6 @@
            js-mode
            emacs-lisp-mode). rainbow-mode))
   :defer 5)
-
-(setq
- +doom-dashboard-menu-sections (cl-subseq +doom-dashboard-menu-sections 0 2))
 
 (after! company
   (setq tab-always-indent 'complete
@@ -83,14 +81,6 @@
                                vterm-mode)
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-frontend)))
-
-(after! whitespace
-  (setq
-   whitespace-style '(face tabs spaces trailing space-before-tab
-                      indentation empty space-after-tab tab-mark space-mark)
-   display-line-numbers-type t
-   show-trailing-whitespace t)
-  global-whitespace-mode 1)
 
 (add-hook 'magit-section-mode-hook (lambda () (setq whitespace-style nil)))
 
