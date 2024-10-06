@@ -233,13 +233,11 @@
   (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover)
   (map! :leader :desc "Run Rails Migrations" "tg" #'rails-run-migrations))
 
-;; Improve LSP
-(after! lsp-mode
-  (setq lsp-auto-guess-root t)
-  (setq lsp-solargraph-symbols nil)
-  (setq lsp-solargraph-folding nil)
-  (setq lsp-disabled-clients '(emmet-ls))
-  (setq lsp-ui-sideline-show-code-actions t))
+;; Tree sitter codemetrics
+(use-package! codemetrics
+  :after tree-sitter-mode
+  :config
+  (codemetrics-mode 1))
 
 ;; Org mode
 (setq

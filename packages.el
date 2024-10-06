@@ -61,3 +61,6 @@
 (package! sql-indent)
 (package! spacious-padding)
 (package! websocket)
+
+(package! codemetrics
+  :recipe (:host github :repo "jcs-elpa/codemetrics"))
