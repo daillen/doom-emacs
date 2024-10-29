@@ -32,7 +32,8 @@
  doom-font (font-spec :family "Iosevka Term SS04" :size 20 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
-(setq doom-theme 'ef-symbiosis)
+;; (setq doom-theme 'ef-symbiosis)
+(setq doom-theme 'doom-old-hope)
 
 (let ((alternatives '("emacs-logo.png"
                       "doom-emacs-color.png"
@@ -47,10 +48,11 @@
       doom-modeline-buffer-encoding nil
       doom-modeline-enable-word-count t
       doom-modeline-time t
-      doom-modeline-vcs-max-length 50
+      doom-modeline-vcs-max-length 100
       doom-modeline-env-python-executable "python"
       doom-modeline-env-ruby-executable "ruby"
-      doom-modeline-major-mode-color-icon t)
+      doom-modeline-major-mode-color-icon t
+      doom-modeline--flycheck nil)
 
 (use-package! rainbow-mode
   :hook (((css-mode
@@ -102,7 +104,7 @@
   (setq display-fill-column-indicator-column 120)
   (display-fill-column-indicator-mode))
 (add-hook! python-mode
-  (setq display-fill-column-indicator-column 80)
+  (setq display-fill-column-indicator-column 120)
   (display-fill-column-indicator-mode))
 
 ;; Web mode
