@@ -51,8 +51,13 @@
       doom-modeline-vcs-max-length 100
       doom-modeline-env-python-executable "python"
       doom-modeline-env-ruby-executable "ruby"
-      doom-modeline-major-mode-color-icon t
+      doom-modeline-major-mode-icon t
+      doom-modeline-lsp-icon t
       doom-modeline--flycheck nil)
+
+(defun doom-modeline-vcs-name ()
+  "Display the vcs name. - Override"
+  (and vc-mode (cadr (split-string (string-trim vc-mode) "^[A-Z]+[-:]+"))))
 
 (use-package! rainbow-mode
   :hook (((css-mode
