@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: IPython embed
+# key: embed
+# --
+IPython.embed(colors='neutral')
