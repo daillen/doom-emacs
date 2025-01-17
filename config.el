@@ -32,8 +32,8 @@
  doom-font (font-spec :family "Iosevka Term SS04" :size 20 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
-;; (setq doom-theme 'ef-symbiosis)
-(setq doom-theme 'doom-old-hope)
+(setq doom-theme 'ef-symbiosis)
+;; (setq doom-theme 'doom-old-hope)
 
 (let ((alternatives '("emacs-logo.png"
                       "doom-emacs-color.png"
@@ -43,21 +43,24 @@
         (concat doom-user-dir "splash/"
                 (nth (random (length alternatives)) alternatives))))
 
-(setq doom-modeline-height 30
-      doom-modeline-window-width-limit nil
-      doom-modeline-buffer-encoding nil
-      doom-modeline-enable-word-count t
-      doom-modeline-time t
-      doom-modeline-vcs-max-length 100
-      doom-modeline-env-python-executable "python"
-      doom-modeline-env-ruby-executable "ruby"
-      doom-modeline-major-mode-icon t
-      doom-modeline-lsp-icon t
-      doom-modeline--flycheck nil)
+(after! doom-modeline
+  (setq doom-modeline-height 30
+        doom-modeline-window-width-limit nil
+        doom-modeline-buffer-encoding nil
+        doom-modeline-enable-word-count t
+        doom-modeline-time t
+        doom-modeline-vcs-max-length 100
+        doom-modeline-env-python-executable "python"
+        doom-modeline-env-ruby-executable "ruby"
+        doom-modeline-major-mode-icon t
+        doom-modeline-lsp-icon t
+        doom-modeline-check-simple-format t)
 
-(defun doom-modeline-vcs-name ()
-  "Display the vcs name. - Override"
-  (and vc-mode (cadr (split-string (string-trim vc-mode) "^[A-Z]+[-:]+"))))
+  :config
+
+  (defun doom-modeline-vcs-name ()
+    "Display the vcs name. - Override"
+    (and vc-mode (cadr (split-string (string-trim vc-mode) "^[A-Z]+[-:]+")))))
 
 (use-package! rainbow-mode
   :hook (((css-mode
