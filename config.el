@@ -29,11 +29,11 @@
   (pixel-scroll-precision-mode))
 
 (setq
- doom-font (font-spec :family "Iosevka Term SS04" :size 20 :weight 'regular)
+ doom-font (font-spec :family "Iosevka Term SS04" :size 18 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
-(setq doom-theme 'ef-symbiosis)
-;; (setq doom-theme 'doom-old-hope)
+;; (setq doom-theme 'ef-symbiosis)
+(setq doom-theme 'doom-old-hope)
 
 (let ((alternatives '("emacs-logo.png"
                       "doom-emacs-color.png"
@@ -310,7 +310,7 @@
   :defer 5
   :config
   (setq gptel-default-mode 'org-mode
-        gptel-model "llama3:latest"
+        gptel-model "codegemma:latest"
         gptel-prompt-prefix-alist '((markdown-mode . "###")
                                     (org-mode . "**")
                                     (text-mode . "->"))
@@ -373,5 +373,11 @@
                               :fringe-width 8))
   :config
   (spacious-padding-mode 1))
+
+(map! :leader
+      :desc "Resume last search"    "sr"
+      (cond ((modulep! :completion vertico)    #'vertico-repeat)
+            ((modulep! :completion ivy)        #'ivy-resume)
+            ((modulep! :completion helm)       #'helm-resume)))
 
 (rbenv-use-global)
