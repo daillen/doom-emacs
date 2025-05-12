@@ -285,9 +285,11 @@
 (add-hook 'org-mode-hook (lambda () (+org-pretty-mode 1)))
 
 (map! :leader :desc "Org Roam" "n")
-(map! :leader :desc "Org Roam Find Node" "nf" #'org-roam-node-find)
-(map! :leader :desc "Org Roam Insert Node" "ni" #'org-roam-node-insert)
-(map! :leader :desc "Org Roam Buffer Toggle" "nb" #'org-roam-buffer-toggle)
+(map! :leader :desc "Find Node" "nf" #'org-roam-node-find)
+(map! :leader :desc "Insert Node" "na" #'org-roam-node-insert)
+(map! :leader :desc "Buffer Toggle" "nb" #'org-roam-buffer-toggle)
+(map! :leader :desc "DB Sync" "ns" #'org-roam-db-sync)
+(map! :leader :desc "Show Graph" "ng" #'org-roam-graph)
 
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
