@@ -284,7 +284,11 @@
 
 (add-hook 'org-mode-hook (lambda () (+org-pretty-mode 1)))
 
-(map! :leader :desc "Org Roam Find Node" "d" #'org-roam-node-find)
+(map! :leader :desc "Org Roam" "n")
+(map! :leader :desc "Org Roam Find Node" "nf" #'org-roam-node-find)
+(map! :leader :desc "Org Roam Insert Node" "ni" #'org-roam-node-insert)
+(map! :leader :desc "Org Roam Buffer Toggle" "nb" #'org-roam-buffer-toggle)
+
 (use-package! websocket :after org-roam)
 (use-package! org-roam-ui
   :after org-roam
@@ -306,12 +310,6 @@
 
   :config
   (global-blamer-mode 1))
-
-(use-package! elysium
-  :custom
-  ;; Below are the default values
-  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
-  (elysium-window-style 'vertical)) ; Can be customized to horizontal
 
 (use-package! gptel
   :defer 5

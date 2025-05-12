@@ -52,7 +52,6 @@
 (package! all-the-icons)
 (package! blamer)
 (package! ef-themes)
-(package! elysium)
 (package! golden-ratio)
 (package! gptel)
 (package! k8s-mode)
