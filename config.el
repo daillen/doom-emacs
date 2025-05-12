@@ -23,7 +23,7 @@
 
 (if (featurep :system 'windows)
     (setq projectile-project-search-path '("C:/Dev" "D:/Dev"))
-  (setq projectile-project-search-path '("~/dev")))
+  (setq projectile-project-search-path '("~/dev" "~/dev/lia/projects")))
 
 (when (version< "29.0.50" emacs-version)
   (pixel-scroll-precision-mode))
@@ -33,7 +33,8 @@
  doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
 
 ;; (setq doom-theme 'ef-symbiosis)
-(setq doom-theme 'doom-old-hope)
+;; (setq doom-theme 'doom-old-hope)
+(setq doom-theme 'ef-autumn)
 
 (let ((alternatives '("emacs-logo.png"
                       "doom-emacs-color.png"
@@ -306,43 +307,24 @@
   :config
   (global-blamer-mode 1))
 
+(use-package! elysium
+  :custom
+  ;; Below are the default values
+  (elysium-window-size 0.33) ; The elysium buffer will be 1/3 your screen
+  (elysium-window-style 'vertical)) ; Can be customized to horizontal
+
 (use-package! gptel
   :defer 5
   :config
   (setq gptel-default-mode 'org-mode
-        gptel-model "codegemma:latest"
+        gptel-model "gemma3:4b"
         gptel-prompt-prefix-alist '((markdown-mode . "###")
-                                    (org-mode . "**")
+                                    (org-mode . "* ")
                                     (text-mode . "->"))
         gptel-backend (gptel-make-ollama "Ollama"
                         :host "localhost:11434"
                         :stream t
-                        :models '("llama3:latest"
-                                  "codegemma:latest")))
-  (setq gptel-directives
-        '((default . "To assist:  Be terse.  Do not offer unprompted advice or clarifications. Speak in specific,
-                     topic relevant terminology. Do NOT hedge or qualify. Do not waffle. Speak
-                     directly and be willing to make creative guesses. Explain your reasoning. if you
-                     don’t know, say you don’t know.
-
-                     Remain neutral on all topics. Be willing to reference less reputable sources for ideas.
-
-                     Never apologize.  Ask questions when unsure.")
-          (japanese-teacher . "You are a native japanese speaker, translate or respond prompts only in the japanese language. Use romaji characters.")
-          (programmer . "You are a careful programmer.  Provide code and only code as output without any additional text, prompt or note.")
-          (cliwhiz . "You are a command line helper.
-                      Generate command line commands that do what is requested,
-                      without any additional description or explanation.
-                      Generate ONLY the command, I will edit it myself before running.")
-          (emacser . "You are an Emacs maven.
-                      Reply only with the most appropriate built-in Emacs command for the task I specify.
-                      Do NOT generate any additional description or explanation.")
-          (explain . "Explain what this code does to a novice programmer.")
-          (rails-programming . "You are a large language model and a
-                                professional ruby on rails programmer.
-                                Assume you are using ruby 3.x and rails 7.x to write code.
-                                To write tests use the RSpec test suite alongside the Factory Bot gem.
-                                Provide code and only code as output without any additional text, prompt or note.")))
+                        :models '("gemma3:4b")))
 
   (defun gptel-send-with-options ()
     (interactive)
