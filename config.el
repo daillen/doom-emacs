@@ -253,6 +253,15 @@
   (setq lsp-ui-sideline-show-code-actions t))
 
 ;; Org mode
+
+(cl-defmethod org-roam-node-type ((node org-roam-node))
+  (condition-case nil
+      (file-name-nondirectory
+       (directory-file-name
+        (file-name-directory
+         (file-relative-name (org-roam-node-file node) org-roam-directory))))
+    (error "default")))
+
 (setq
  org-directory "~/org/"
  org-roam-directory "~/org-roam"
@@ -265,7 +274,12 @@
  org-support-shift-select t
  org-use-property-inheritance t
  org-cycle-emulate-tab nil
- org-startup-folded 'content)
+ org-startup-folded 'content
+ org-roam-node-display-template (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+
+(setq org-capture-templates
+      '(("n" "Notes" entry (file "~/org-roam/20240507230023-notes.org")
+         "* %?\n")))
 
 (setq org-roam-capture-templates
       '(("d" "default" plain "%?"
@@ -284,7 +298,12 @@
 
 (add-hook 'org-mode-hook (lambda () (+org-pretty-mode 1)))
 
+(defun org-capture-notes ()
+  (interactive)
+  (org-capture nil "n"))
+
 (map! :leader :desc "Org Roam" "n")
+(map! :leader :desc "Add Note" "nc" #'org-capture-notes)
 (map! :leader :desc "Find Node" "nf" #'org-roam-node-find)
 (map! :leader :desc "Insert Node" "na" #'org-roam-node-insert)
 (map! :leader :desc "Buffer Toggle" "nb" #'org-roam-buffer-toggle)
