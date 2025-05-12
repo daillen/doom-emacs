@@ -22,7 +22,7 @@
 (setq +magit-hub-features t)
 
 (if (featurep :system 'windows)
-    (setq projectile-project-search-path '("C:/Dev" "D:/Dev"))
+    (setq projectile-project-search-path '("C:/Dev" "C:/Dev/lia/projects" "D:/Dev"))
   (setq projectile-project-search-path '("~/dev" "~/dev/lia/projects")))
 
 (when (version< "29.0.50" emacs-version)
@@ -317,14 +317,12 @@
   :defer 5
   :config
   (setq gptel-default-mode 'org-mode
-        gptel-model "gemma3:4b"
         gptel-prompt-prefix-alist '((markdown-mode . "###")
                                     (org-mode . "* ")
                                     (text-mode . "->"))
-        gptel-backend (gptel-make-ollama "Ollama"
-                        :host "localhost:11434"
-                        :stream t
-                        :models '("gemma3:4b")))
+        gptel-model 'claude-3-5-sonnet-20241022
+        gptel-backend (gptel-make-anthropic "Claude"
+                        :stream t :key (getenv "CLAUDE_API_KEY")))
 
   (defun gptel-send-with-options ()
     (interactive)
@@ -333,7 +331,9 @@
       )
     )
 
-  (map! :leader :desc "Send gptel prompt" "r" #'gptel-send-with-options))
+  (map! :leader :desc "Gptel" "r")
+  (map! :leader :desc "Gptel Send" "rs" #'gptel-send-with-options)
+  (map! :leader :desc "Gptel Rewrite" "rr" #'gptel-rewrite))
 
 (use-package! golden-ratio
   :after-call pre-command-hook
