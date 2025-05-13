@@ -84,12 +84,16 @@
         company-tooltip-align-annotations t
         company-format-margin-function 'company-text-icons-margin
         company-global-modes '(not org-mode
-                               not erc-mode
+                               erc-mode
                                circe-mode
                                message-mode
                                help-mode
                                gud-mode
-                               vterm-mode)
+                               vterm-mode
+                               shell-mode
+                               compilation-mode
+                               comint-mode
+                               term-mode)
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-frontend)))
 
@@ -156,6 +160,50 @@
 
 (map! :leader :desc "Toggle Zen Mode" "z" #'+zen/toggle)
 
+;; Docker
+(defvar docker-compose-file "~/dev/lia/docker-compose.yml"
+  "Path to docker-compose.yml file.")
+
+(defun docker-compose-run (&optional service command)
+  "Run a command in a Docker Compose service container.
+   SERVICE: The service name (default: platform-api)
+   COMMAND: The command to run (default: bundle exec rails c)"
+  (let* ((service (or service "platform-api"))
+         (command (or command "bundle exec rails c"))
+         (docker-command (format "docker compose -f %s run --rm %s %s"
+                                 docker-compose-file service command)))
+    (compile docker-command 'rspec-compilation-mode)))
+
+(defun rspec-verify-all-parallel ()
+  "rails parallel:spec"
+  (interactive)
+  (docker-compose-run nil "bundle exec rails parallel:spec"))
+
+(defun docker-run-rubocop ()
+  "rails parallel:spec"
+  (interactive)
+  (docker-compose-run nil "bundle exec rubocop"))
+
+(defun docker-run-undercover ()
+  "undercover -c origin/main"
+  (interactive)
+  (docker-compose-run nil "bundle exec undercover -c origin/main"))
+
+(defun docker-run-rails-migrations ()
+  "rails db:migrate"
+  (interactive)
+  (docker-compose-run nil "bundle exec rails db:migrate"))
+
+(defun docker-run-rails-console ()
+  "rails development console"
+  (interactive)
+  (docker-compose-run nil "bundle exec rails console"))
+
+(map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
+(map! :leader :desc "Run Rubocop" "tr" #'docker-run-rubocop)
+(map! :leader :desc "Run Undercover" "tu" #'docker-run-undercover)
+(map! :leader :desc "Run Rails Migrations" "tg" #'docker-run-rails-migrations)
+
 ;; Ruby
 (setq
  ruby-indent-level 2)
@@ -201,35 +249,6 @@
      (rspec-spec-file-for (buffer-file-name))
      (rspec-core-options)))
 
-  (defun run-command-using-docker (command)
-    (interactive)
-    (let ((docker-compose-command (concat rspec-docker-command
-                                          " "
-                                          rspec-docker-container)))
-      (compile
-       (concat docker-compose-command " " command)
-       t)))
-
-  (defun rspec-verify-all-parallel ()
-    "rails parallel:spec"
-    (interactive)
-    (run-command-using-docker "bundle exec rails parallel:spec"))
-
-  (defun rspec-run-undercover ()
-    "undercover -c origin/main"
-    (interactive)
-    (run-command-using-docker "bundle exec undercover -c origin/main"))
-
-  (defun rails-run-migrations ()
-    "rails db:migrate"
-    (interactive)
-    (run-command-using-docker "bundle exec rails db:migrate"))
-
-  (defun rails-dev-console ()
-    "rails development console"
-    (interactive)
-    (run-command-using-docker "bundle exec rails console"))
-
   (setq rspec-factory-gem 'factory-bot)
   (setq rspec-use-docker-when-possible t)
   (setq rspec-docker-file-name "../../docker-compose.yml")
@@ -239,10 +258,7 @@
   (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.5 :ttl nil :select t)
   (map! :leader :desc "Rspec" "t" #'rspec-mode-keymap)
   (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed)
-  (map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
-  (map! :leader :desc "Verify File" "tf" #'rspec-verify-single-file)
-  (map! :leader :desc "Run Undercover" "tu" #'rspec-run-undercover)
-  (map! :leader :desc "Run Rails Migrations" "tg" #'rails-run-migrations))
+  (map! :leader :desc "Verify File" "tf" #'rspec-verify-single-file))
 
 ;; Improve LSP
 (after! lsp-mode
