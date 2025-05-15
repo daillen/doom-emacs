@@ -19,14 +19,17 @@
 
 (global-auto-revert-mode 1)
 (global-visual-line-mode 1)
-(setq +magit-hub-features t)
+
+(if (featurep :system 'macos)
+    (setq mac-command-modifier 'meta
+          mac-option-modifier 'none
+          mac-right-option-modifier 'super
+          ns-use-proxy-icon nil ; disable file icon in titlebar
+          ns-use-native-fullscreen t))
 
 (if (featurep :system 'windows)
     (setq projectile-project-search-path '("C:/Dev" "C:/Dev/lia/projects" "D:/Dev"))
   (setq projectile-project-search-path '("~/dev" "~/dev/lia/projects")))
-
-(when (version< "29.0.50" emacs-version)
-  (pixel-scroll-precision-mode))
 
 (setq
  doom-font (font-spec :family "Iosevka Term SS04" :size 18 :weight 'regular)
@@ -36,13 +39,46 @@
 ;; (setq doom-theme 'doom-old-hope)
 (setq doom-theme 'ef-autumn)
 
-(let ((alternatives '("emacs-logo.png"
-                      "doom-emacs-color.png"
-                      "doom-emacs-flugo-slant_out_purple.png"
-                      "doom-emacs-flugo-slant_out_bw.png")))
-  (setq fancy-splash-image
-        (concat doom-user-dir "splash/"
-                (nth (random (length alternatives)) alternatives))))
+(add-hook! display-line-numbers-mode
+  (custom-set-faces!
+    '(line-number :slant normal)
+    '(line-number-current-line :slant normal)))
+
+;; (let ((alternatives '("emacs-logo.png"
+;;                       "doom-emacs-color.png"
+;;                       "doom-emacs-flugo-slant_out_purple.png"
+;;                       "doom-emacs-flugo-slant_out_bw.png")))
+;;   (setq fancy-splash-image
+;;         (concat doom-user-dir "splash/"
+;;                 (nth (random (length alternatives)) alternatives))))
+
+(defun my-weebery-is-always-greater ()
+  (let* ((banner '("⢸⣿⣿⣿⣿⠃⠄⢀⣴⡾⠃⠄⠄⠄⠄⠄⠈⠺⠟⠛⠛⠛⠛⠻⢿⣿⣿⣿⣿⣶⣤⡀⠄"
+                   "⢸⣿⣿⣿⡟⢀⣴⣿⡿⠁⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣸⣿⣿⣿⣿⣿⣿⣿⣷"
+                   "⢸⣿⣿⠟⣴⣿⡿⡟⡼⢹⣷⢲⡶⣖⣾⣶⢄⠄⠄⠄⠄⠄⢀⣼⣿⢿⣿⣿⣿⣿⣿⣿⣿"
+                   "⢸⣿⢫⣾⣿⡟⣾⡸⢠⡿⢳⡿⠍⣼⣿⢏⣿⣷⢄⡀⠄⢠⣾⢻⣿⣸⣿⣿⣿⣿⣿⣿⣿"
+                   "⡿⣡⣿⣿⡟⡼⡁⠁⣰⠂⡾⠉⢨⣿⠃⣿⡿⠍⣾⣟⢤⣿⢇⣿⢇⣿⣿⢿⣿⣿⣿⣿⣿"
+                   "⣱⣿⣿⡟⡐⣰⣧⡷⣿⣴⣧⣤⣼⣯⢸⡿⠁⣰⠟⢀⣼⠏⣲⠏⢸⣿⡟⣿⣿⣿⣿⣿⣿"
+                   "⣿⣿⡟⠁⠄⠟⣁⠄⢡⣿⣿⣿⣿⣿⣿⣦⣼⢟⢀⡼⠃⡹⠃⡀⢸⡿⢸⣿⣿⣿⣿⣿⡟"
+                   "⣿⣿⠃⠄⢀⣾⠋⠓⢰⣿⣿⣿⣿⣿⣿⠿⣿⣿⣾⣅⢔⣕⡇⡇⡼⢁⣿⣿⣿⣿⣿⣿⢣"
+                   "⣿⡟⠄⠄⣾⣇⠷⣢⣿⣿⣿⣿⣿⣿⣿⣭⣀⡈⠙⢿⣿⣿⡇⡧⢁⣾⣿⣿⣿⣿⣿⢏⣾"
+                   "⣿⡇⠄⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⢻⠇⠄⠄⢿⣿⡇⢡⣾⣿⣿⣿⣿⣿⣏⣼⣿"
+                   "⣿⣷⢰⣿⣿⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿⢰⣧⣀⡄⢀⠘⡿⣰⣿⣿⣿⣿⣿⣿⠟⣼⣿⣿"
+                   "⢹⣿⢸⣿⣿⠟⠻⢿⣿⣿⣿⣿⣿⣿⣿⣶⣭⣉⣤⣿⢈⣼⣿⣿⣿⣿⣿⣿⠏⣾⣹⣿⣿"
+                   "⢸⠇⡜⣿⡟⠄⠄⠄⠈⠙⣿⣿⣿⣿⣿⣿⣿⣿⠟⣱⣻⣿⣿⣿⣿⣿⠟⠁⢳⠃⣿⣿⣿"
+                   "⠄⣰⡗⠹⣿⣄⠄⠄⠄⢀⣿⣿⣿⣿⣿⣿⠟⣅⣥⣿⣿⣿⣿⠿⠋⠄⠄⣾⡌⢠⣿⡿⠃"
+                   "⠜⠋⢠⣷⢻⣿⣿⣶⣾⣿⣿⣿⣿⠿⣛⣥⣾⣿⠿⠟⠛⠉⠄⠄          "))
+         (longest-line (apply #'max (mapcar #'length banner))))
+    (put-text-property
+     (point)
+     (dolist (line banner (point))
+       (insert (+doom-dashboard--center
+                +doom-dashboard--width
+                (concat line (make-string (max 0 (- longest-line (length line))) 32)))
+               "\n"))
+     'face 'doom-dashboard-banner)))
+
+(setq +doom-dashboard-ascii-banner-fn #'my-weebery-is-always-greater)
 
 (after! doom-modeline
   (setq doom-modeline-height 30
@@ -269,6 +305,15 @@
   (setq lsp-ui-sideline-show-code-actions t))
 
 ;; Org mode
+
+(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
+  :around #'doom-modeline-buffer-file-name ; takes no args
+  (if (string-match-p (regexp-quote org-roam-directory) (or buffer-file-name ""))
+      (replace-regexp-in-string
+       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
+       "(\\1-\\2-\\3) "
+       (subst-char-in-string ?_ ?  buffer-file-name))
+    (funcall orig-fun)))
 
 (cl-defmethod org-roam-node-type ((node org-roam-node))
   (condition-case nil
