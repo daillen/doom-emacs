@@ -23,7 +23,7 @@
 (if (featurep :system 'macos)
     (setq mac-command-modifier 'meta
           mac-option-modifier 'none
-          mac-right-option-modifier 'super
+          mac-right-option-modifier 'none
           ns-use-proxy-icon nil ; disable file icon in titlebar
           ns-use-native-fullscreen t))
 
@@ -301,7 +301,6 @@
   (setq lsp-auto-guess-root t)
   (setq lsp-solargraph-symbols nil)
   (setq lsp-solargraph-folding nil)
-  (setq lsp-disabled-clients '(emmet-ls))
   (setq lsp-ui-sideline-show-code-actions t))
 
 ;; Org mode
@@ -314,14 +313,6 @@
        "(\\1-\\2-\\3) "
        (subst-char-in-string ?_ ?  buffer-file-name))
     (funcall orig-fun)))
-
-(cl-defmethod org-roam-node-type ((node org-roam-node))
-  (condition-case nil
-      (file-name-nondirectory
-       (directory-file-name
-        (file-name-directory
-         (file-relative-name (org-roam-node-file node) org-roam-directory))))
-    (error "default")))
 
 (setq
  org-directory "~/org/"
@@ -336,7 +327,7 @@
  org-use-property-inheritance t
  org-cycle-emulate-tab nil
  org-startup-folded 'content
- org-roam-node-display-template (concat "${type:15} ${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+ org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
 
 (setq org-capture-templates
       '(("n" "Notes" entry (file "~/org-roam/20240507230023-notes.org")
