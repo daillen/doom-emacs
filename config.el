@@ -384,6 +384,25 @@
   :config
   (global-blamer-mode 1))
 
+;; Gptel
+
+(defun gptel-load-directives-from-files (directory)
+  (let ((directives '()))
+    (dolist (file (directory-files directory t "\\.txt$"))
+      (let* ((filename (file-name-nondirectory file))
+             (key (file-name-sans-extension filename))
+             (content (with-temp-buffer
+                        (insert-file-contents file)
+                        (buffer-string))))
+        ;; Convert key to symbol and add the pair to our directives list
+        (push (cons (intern key) content) directives)))
+    directives))
+
+(defun gptel-send-with-options ()
+  (interactive)
+  (let ((current-prefix-arg 4)) ;; emulate C-u
+    (call-interactively 'gptel-send)))
+
 (use-package! gptel
   :defer 5
   :config
@@ -391,16 +410,11 @@
         gptel-prompt-prefix-alist '((markdown-mode . "###")
                                     (org-mode . "* ")
                                     (text-mode . "->"))
-        gptel-model 'claude-3-5-sonnet-20241022
+        gptel-directives (gptel-load-directives-from-files "gptel-directives/")
+        gptel-temperature 0.5
+        gptel-model 'claude-sonnet-4-20250514
         gptel-backend (gptel-make-anthropic "Claude"
                         :stream t :key (getenv "CLAUDE_API_KEY")))
-
-  (defun gptel-send-with-options ()
-    (interactive)
-    (let ((current-prefix-arg 4)) ;; emulate C-u
-      (call-interactively 'gptel-send)
-      )
-    )
 
   (map! :leader :desc "Gptel" "r")
   (map! :leader :desc "Gptel Send" "rs" #'gptel-send-with-options)
