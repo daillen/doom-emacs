@@ -32,12 +32,11 @@
   (setq projectile-project-search-path '("~/dev" "~/dev/lia/projects")))
 
 (setq
- doom-font (font-spec :family "Iosevka Term SS04" :size 18 :weight 'regular)
- doom-big-font (font-spec :family "Iosevka Term SS04" :size 24 :weight 'regular))
+ doom-font (font-spec :family "Iosevka SS04" :size 18 :weight 'regular)
+ doom-big-font (font-spec :family "Iosevka SS04" :size 24 :weight 'regular))
 
-;; (setq doom-theme 'ef-symbiosis)
-;; (setq doom-theme 'doom-old-hope)
-(setq doom-theme 'ef-autumn)
+(setq doom-theme 'doom-gruvbox)
+;; (setq doom-theme 'ef-autumn)
 
 (add-hook! display-line-numbers-mode
   (custom-set-faces!
@@ -298,21 +297,35 @@
 
 ;; Improve LSP
 (after! lsp-mode
-  (setq lsp-auto-guess-root t)
-  (setq lsp-solargraph-symbols nil)
-  (setq lsp-solargraph-folding nil)
-  (setq lsp-ui-sideline-show-code-actions t))
+  (setq lsp-auto-guess-root t
+        lsp-solargraph-symbols nil
+        lsp-solargraph-folding nil
+        lsp-disabled-clients '(emmet-ls)
+        lsp-ui-sideline-show-code-actions t))
+
+;; Clojure
+(use-package! clojure-mode
+  :config
+  (setq clojure-indent-style 'align-arguments
+        clojure-align-forms-automatically t
+        clojure-toplevel-inside-comment-form t  ;; evaluate expressions in comment as top level
+        ))
+
+(after! cider
+  (setq cider-show-error-buffer t               ; show stacktrace buffer
+        cider-print-fn 'puget                   ; pretty printing with sorted keys / set values
+        cider-result-overlay-position 'at-point ; results shown right after expression
+        cider-overlays-use-font-lock t)
+  (set-popup-rules!
+    '(("^\\*cider-repl"
+       :side right
+       :width 50
+       :quit nil
+       :ttl nil)))
+  ;; use lsp completion
+  (add-hook 'cider-mode-hook (lambda () (remove-hook 'completion-at-point-functions #'cider-complete-at-point))))
 
 ;; Org mode
-
-(defadvice! doom-modeline--buffer-file-name-roam-aware-a (orig-fun)
-  :around #'doom-modeline-buffer-file-name ; takes no args
-  (if (string-match-p (regexp-quote org-roam-directory) (or buffer-file-name ""))
-      (replace-regexp-in-string
-       "\\(?:^\\|.*/\\)\\([0-9]\\{4\\}\\)\\([0-9]\\{2\\}\\)\\([0-9]\\{2\\}\\)[0-9]*-"
-       "(\\1-\\2-\\3) "
-       (subst-char-in-string ?_ ?  buffer-file-name))
-    (funcall orig-fun)))
 
 (setq
  org-directory "~/org/"

@@ -2,4 +2,5 @@
 # name: IPython embed
 # key: embed
 # --
+import IPython
 IPython.embed(colors='neutral')
