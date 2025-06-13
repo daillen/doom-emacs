@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: context '' do'
-# key: context
-# --
-context '${}' do
-  ${}
-end
