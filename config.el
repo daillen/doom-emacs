@@ -182,14 +182,14 @@
   (add-hook 'magit-process-mode #'disable-magit-hooks)
   (add-hook 'magit-process-mode-hook #'compilation-mode)
 
-  (setq magit-section-visibility-indicator '(" ▾"))
-  (setq git-commit-style-convention-checks '(non-empty-second-line))
-  (setq magit-process-finish-apply-ansi-colors t)
-  (setq magit-diff-highlight-indentation nil)
-  (setq magit-diff-highlight-trailing nil)
-  (setq magit-diff-paint-whitespace nil)
-  (setq magit-diff-highlight-hunk-body nil)
-  (setq magit-diff-refine-hunk nil)
+  (setq magit-section-visibility-indicator '(" ▾")
+        git-commit-style-convention-checks '(non-empty-second-line)
+        magit-process-finish-apply-ansi-colors t
+        magit-diff-highlight-indentation nil
+        magit-diff-highlight-trailing nil
+        magit-diff-paint-whitespace nil
+        magit-diff-highlight-hunk-body nil
+        magit-diff-refine-hunk nil)
 
   (evil-set-initial-state 'magit-status-mode 'emacs))
 
