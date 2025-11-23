@@ -28,7 +28,7 @@
           ns-use-native-fullscreen t))
 
 (if (featurep :system 'windows)
-    (setq projectile-project-search-path '("C:/Dev" "C:/Dev/lia/projects" "D:/Dev"))
+    (setq projectile-project-search-path '("C:/Dev" "C:/Dev/lia/projects" "C:/Dev/Projects" "D:/Dev"))
   (setq projectile-project-search-path '("~/dev" "~/dev/lia/projects")))
 
 (setq
@@ -416,18 +416,57 @@
   (let ((current-prefix-arg 4)) ;; emulate C-u
     (call-interactively 'gptel-send)))
 
+(defun gptel-read-documentation (symbol)
+  "Read the documentation for SYMBOL, which can be a function or variable."
+  (let ((sym (intern symbol)))
+    (cond
+     ((fboundp sym)
+      (documentation sym))
+     ((boundp sym)
+      (documentation-property sym 'variable-documentation))
+     (t
+      (format "No documentation found for %s" symbol)))))
+
 (use-package! gptel
   :defer 5
   :config
   (setq gptel-default-mode 'org-mode
+        gptel-use-tools t
         gptel-prompt-prefix-alist '((markdown-mode . "###")
                                     (org-mode . "* ")
                                     (text-mode . "->"))
-        gptel-directives (gptel-load-directives-from-files "gptel-directives/")
+        gptel-directives (gptel-load-directives-from-files (concat doom-user-dir "gptel-directives/"))
         gptel-temperature 0.5
         gptel-model 'claude-sonnet-4-20250514
         gptel-backend (gptel-make-anthropic "Claude"
                         :stream t :key (getenv "CLAUDE_API_KEY")))
+
+  (add-to-list 'gptel-tools
+               (gptel-make-tool
+                :function (lambda (url)
+                            (with-current-buffer (url-retrieve-synchronously url)
+                              (goto-char (point-min))
+                              (forward-paragraph)
+                              (let ((dom (libxml-parse-html-region (point) (point-max))))
+                                (run-at-time 0 nil #'kill-buffer (current-buffer))
+                                (with-temp-buffer
+                                  (shr-insert-document dom)
+                                  (buffer-substring-no-properties (point-min) (point-max))))))
+                :name "read_url"
+                :description "Fetch and read the contents of a URL"
+                :args (list '(:name "url"
+                              :type string
+                              :description "The URL to read"))
+                :category "web")
+
+               (gptel-make-tool
+                :name "read_documentation"
+                :function #'gptel-read-documentation
+                :description "Read the documentation for a given function or variable"
+                :args (list '(:name "name"
+                              :type string
+                              :description "The name of the function or variable whose documentation is to be retrieved"))
+                :category "emacs"))
 
   (map! :leader :desc "Gptel" "r")
   (map! :leader :desc "Gptel Send" "rs" #'gptel-send-with-options)
