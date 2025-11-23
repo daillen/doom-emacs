@@ -303,28 +303,6 @@
         lsp-disabled-clients '(emmet-ls)
         lsp-ui-sideline-show-code-actions t))
 
-;; Clojure
-(use-package! clojure-mode
-  :config
-  (setq clojure-indent-style 'align-arguments
-        clojure-align-forms-automatically t
-        clojure-toplevel-inside-comment-form t  ;; evaluate expressions in comment as top level
-        ))
-
-(after! cider
-  (setq cider-show-error-buffer t               ; show stacktrace buffer
-        cider-print-fn 'puget                   ; pretty printing with sorted keys / set values
-        cider-result-overlay-position 'at-point ; results shown right after expression
-        cider-overlays-use-font-lock t)
-  (set-popup-rules!
-    '(("^\\*cider-repl"
-       :side right
-       :width 50
-       :quit nil
-       :ttl nil)))
-  ;; use lsp completion
-  (add-hook 'cider-mode-hook (lambda () (remove-hook 'completion-at-point-functions #'cider-complete-at-point))))
-
 ;; Org mode
 
 (setq
