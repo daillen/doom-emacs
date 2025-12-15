@@ -180,6 +180,8 @@
 
 ;; Magit
 (after! magit
+  (remove-hook 'server-switch-hook 'magit-commit-diff)
+
   (setq magit-section-visibility-indicator '(" ▾")
         git-commit-style-convention-checks '(non-empty-second-line)
         magit-process-finish-apply-ansi-colors t
