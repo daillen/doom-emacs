@@ -35,8 +35,10 @@
  doom-font (font-spec :family "Iosevka SS04" :size 18 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka SS04" :size 24 :weight 'regular))
 
+;; (setq doom-theme 'doom-oceanic-next)
 (setq doom-theme 'doom-gruvbox)
 ;; (setq doom-theme 'ef-autumn)
+;; (setq doom-theme 'ef-symbiosis)
 
 (add-hook! display-line-numbers-mode
   (custom-set-faces!
@@ -107,6 +109,13 @@
            emacs-lisp-mode). rainbow-mode))
   :defer 5)
 
+(use-package! rbenv
+  :config
+  ;; Enable rbenv globally
+  (global-rbenv-mode 1)
+  ;; Optional: use global ruby version
+  (rbenv-use-global))
+
 (after! company
   (setq tab-always-indent 'complete
         completion-cycle-threshold 3
@@ -132,7 +141,6 @@
         company-frontends '(company-pseudo-tooltip-unless-just-one-frontend
                             company-preview-frontend)))
 
-(add-hook 'magit-section-mode-hook (lambda () (setq whitespace-style nil)))
 
 (after! ligature
   global-ligature-mode -1)
@@ -172,26 +180,15 @@
 
 ;; Magit
 (after! magit
-  (define-key transient-map        "q" 'transient-quit-one)
-  (define-key transient-edit-map   "q" 'transient-quit-one)
-  (define-key transient-sticky-map "q" 'transient-quit-seq)
-  (set-keymap-parent magit-process-mode-map special-mode-map)
-  (setcdr magit-process-mode-map (cdr (make-keymap)))
-
-  (remove-hook 'server-switch-hook 'magit-commit-diff)
-  (add-hook 'magit-process-mode #'disable-magit-hooks)
-  (add-hook 'magit-process-mode-hook #'compilation-mode)
-
   (setq magit-section-visibility-indicator '(" ▾")
         git-commit-style-convention-checks '(non-empty-second-line)
         magit-process-finish-apply-ansi-colors t
         magit-diff-highlight-indentation nil
-        magit-diff-highlight-trailing nil
         magit-diff-paint-whitespace nil
-        magit-diff-highlight-hunk-body nil
         magit-diff-refine-hunk nil)
 
-  (evil-set-initial-state 'magit-status-mode 'emacs))
+  ;; (evil-set-initial-state 'magit-status-mode 'emacs)
+  (add-hook 'magit-section-mode-hook (lambda () (setq whitespace-style nil))))
 
 (map! :leader :desc "Toggle Zen Mode" "z" #'+zen/toggle)
 
@@ -297,10 +294,12 @@
 
 ;; Improve LSP
 (after! lsp-mode
+  (require 'lsp-solargraph)
   (setq lsp-auto-guess-root t
         lsp-solargraph-symbols nil
         lsp-solargraph-folding nil
-        lsp-disabled-clients '(emmet-ls)
+        lsp-enabled-clients '()
+        lsp-disabled-clients '(emmet-ls ruby-ls)
         lsp-ui-sideline-show-code-actions t))
 
 ;; Org mode
@@ -415,7 +414,7 @@
                                     (text-mode . "->"))
         gptel-directives (gptel-load-directives-from-files (concat doom-user-dir "gptel-directives/"))
         gptel-temperature 0.5
-        gptel-model 'claude-sonnet-4-20250514
+        gptel-model 'claude-sonnet-4-5-20250929
         gptel-backend (gptel-make-anthropic "Claude"
                         :stream t :key (getenv "CLAUDE_API_KEY")))
 
@@ -477,4 +476,3 @@
             ((modulep! :completion ivy)        #'ivy-resume)
             ((modulep! :completion helm)       #'helm-resume)))
 
-(rbenv-use-global)
