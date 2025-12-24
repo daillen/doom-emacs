@@ -36,9 +36,8 @@
  doom-big-font (font-spec :family "Iosevka SS04" :size 24 :weight 'regular))
 
 ;; (setq doom-theme 'doom-oceanic-next)
-(setq doom-theme 'doom-gruvbox)
-;; (setq doom-theme 'ef-autumn)
-;; (setq doom-theme 'ef-symbiosis)
+;; (setq doom-theme 'doom-gruvbox)
+(setq doom-theme 'ef-owl)
 
 (add-hook! display-line-numbers-mode
   (custom-set-faces!
@@ -195,6 +194,33 @@
 (map! :leader :desc "Toggle Zen Mode" "z" #'+zen/toggle)
 
 ;; Docker
+
+(defun run-in-vterm (command)
+  "Execute COMMAND in vterm with compile-like behavior."
+  (interactive
+   (list (read-shell-command "Run command: ")))
+  (let ((default-directory (or (and (fboundp 'project-root)
+                                    (project-root (project-current)))
+                               (and (fboundp 'projectile-project-root)
+                                    (projectile-project-root))
+                               default-directory))
+        (buffer-name (format "*vterm: %s*" command)))
+    (with-current-buffer (vterm buffer-name)
+      (setq-local vterm-kill-buffer-on-exit nil)
+      
+      ;; Use compilation-minor-mode for the 'q' binding behavior
+      (add-hook 'vterm-exit-functions
+                (lambda (buffer _event)
+                  (when (buffer-live-p buffer)
+                    (with-current-buffer buffer
+                      (vterm-copy-mode 1)
+                      (compilation-minor-mode 1)
+                      (read-only-mode 1))))
+                nil t)
+      
+      (vterm-send-string (format "%s; exit" command))
+      (vterm-send-return))))
+
 (defvar docker-compose-file "~/dev/lia/docker-compose.yml"
   "Path to docker-compose.yml file.")
 
@@ -206,7 +232,30 @@
          (command (or command "bundle exec rails c"))
          (docker-command (format "docker compose -f %s run --rm %s %s"
                                  docker-compose-file service command)))
-    (compile docker-command 'rspec-compilation-mode)))
+    (run-in-vterm docker-command)))
+
+(defun my/rspec-run-single ()
+  "Run rspec on current file at current line using project-relative path."
+  (interactive)
+  (let* ((file (buffer-file-name))
+         (project-root (or (locate-dominating-file file ".git")
+                           (locate-dominating-file file "Gemfile")
+                           default-directory))
+         (relative-file (file-relative-name file project-root))
+         (line (line-number-at-pos))
+         (command (format "bundle exec rspec %s:%d" relative-file line)))
+    (docker-compose-run nil command)))
+
+(defun my/rspec-run-single-file ()
+  "Run rspec on current file at current line using project-relative path."
+  (interactive)
+  (let* ((file (buffer-file-name))
+         (project-root (or (locate-dominating-file file ".git")
+                           (locate-dominating-file file "Gemfile")
+                           default-directory))
+         (relative-file (file-relative-name file project-root))
+         (command (format "bundle exec rspec %s" relative-file)))
+    (docker-compose-run nil command)))
 
 (defun rspec-verify-all-parallel ()
   "rails parallel:spec"
@@ -233,23 +282,13 @@
   (interactive)
   (docker-compose-run nil "bundle exec rails console"))
 
-(map! :leader :desc "Verify All Parallel" "ta" #'rspec-verify-all-parallel)
-(map! :leader :desc "Run Rubocop" "tr" #'docker-run-rubocop)
-(map! :leader :desc "Run Undercover" "tu" #'docker-run-undercover)
-(map! :leader :desc "Run Rails Migrations" "tg" #'docker-run-rails-migrations)
 
 ;; Ruby
 (setq
  ruby-indent-level 2)
 
 (after! ruby
-  (add-hook 'ruby-mode-hook #'rainbow-delimiters-mode)
-  (add-to-list 'hs-special-modes-alist
-               `(ruby-mode
-                 ,(rx (or "def" "class" "module" "do" "{" "[")) ; Block start
-                 ,(rx (or "}" "]" "end"))                       ; Block end
-                 ,(rx (or "#" "=begin"))                        ; Comment start
-                 ruby-forward-sexp nil)))
+  (add-hook 'ruby-mode-hook #'rainbow-delimiters-mode))
 
 (after! ruby-mode
   (set-lookup-handlers! 'ruby-mode
@@ -291,8 +330,12 @@
 
   (set-popup-rule! "^\\*\\(rspec-\\)?compilation" :size 0.5 :ttl nil :select t)
   (map! :leader :desc "Rspec" "t" #'rspec-mode-keymap)
-  (map! :leader :desc "Run Last Failed" "tl" #'rspec-run-last-failed)
-  (map! :leader :desc "Verify File" "tf" #'rspec-verify-single-file))
+  (map! :leader :desc "Run Single" "ts" #'my/rspec-run-single)
+  (map! :leader :desc "Run Single File" "tf" #'my/rspec-run-single-file)
+  (map! :leader :desc "Run All Parallel" "ta" #'rspec-verify-all-parallel)
+  (map! :leader :desc "Run Rubocop" "tr" #'docker-run-rubocop)
+  (map! :leader :desc "Run Undercover" "tu" #'docker-run-undercover)
+  (map! :leader :desc "Run Rails Migrations" "tg" #'docker-run-rails-migrations))
 
 ;; Improve LSP
 (after! lsp-mode
@@ -410,7 +453,7 @@
   :defer 5
   :config
   (setq gptel-default-mode 'org-mode
-        gptel-use-tools t
+        gptel-use-tools nil
         gptel-prompt-prefix-alist '((markdown-mode . "###")
                                     (org-mode . "* ")
                                     (text-mode . "->"))
