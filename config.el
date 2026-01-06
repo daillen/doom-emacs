@@ -282,17 +282,20 @@
   (docker-compose-run nil "bundle exec rails console"))
 
 
-;; Ruby
-(setq
- ruby-indent-level 2)
+;; Golang
+(after! go-mode
+  (setq go-ts-mode-indent-offset 4))
 
-(after! ruby
-  (add-hook 'ruby-mode-hook #'rainbow-delimiters-mode))
+;; Ruby
 
 (after! ruby-mode
   (set-lookup-handlers! 'ruby-mode
     :definition '(projectile-rails-goto-file-at-point robe-jump)
-    :documentation #'robe-doc))
+    :documentation #'robe-doc)
+
+  (setq ruby-indent-level 2)
+  
+  (add-hook 'ruby-mode-hook #'rainbow-delimiters-mode))
 
 (after! projectile-rails
   (defun doom-emacs-on-rails-add-custom-projectile-finder (name
@@ -420,6 +423,17 @@
 
 ;; Gptel
 
+(defun gptel-load-directives-from-files (directory)
+  (let ((directives '()))
+    (dolist (file (directory-files directory t "\\.txt$"))
+      (let* ((filename (file-name-nondirectory file))
+             (key (file-name-sans-extension filename))
+             (content (with-temp-buffer
+                        (insert-file-contents file)
+                        (buffer-string))))
+        (push (cons (intern key) content) directives)))
+    directives))
+
 (use-package! gptel
   :defer 5
   :config
@@ -455,6 +469,13 @@
     :system 'rails-expert
     :temperature 1.0)
   
+  (gptel-make-preset 'go-coding
+    :description "Preset for writing and debugging go code"
+    :backend "Claude-thinking"
+    :model 'claude-opus-4-5-20251101
+    :system 'go-expert
+    :temperature 1.0)
+  
   (add-to-list 'gptel-tools
                (gptel-make-tool
                 :function (lambda (url)
@@ -481,17 +502,6 @@
                               :type string
                               :description "The name of the function or variable whose documentation is to be retrieved"))
                 :category "emacs"))
-
-  (defun gptel-load-directives-from-files (directory)
-    (let ((directives '()))
-      (dolist (file (directory-files directory t "\\.txt$"))
-        (let* ((filename (file-name-nondirectory file))
-               (key (file-name-sans-extension filename))
-               (content (with-temp-buffer
-                          (insert-file-contents file)
-                          (buffer-string))))
-          (push (cons (intern key) content) directives)))
-      directives))
 
   (defun gptel-send-with-options ()
     (interactive)

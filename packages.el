@@ -58,6 +58,7 @@
 (package! org-roam-ui)
 (package! rails-i18n)
 (package! rails-routes)
+(package! rainbow-delimiters)
 (package! sql-indent)
 (package! spacious-padding)
 (package! websocket)
