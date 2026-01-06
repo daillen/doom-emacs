@@ -15,3 +15,4 @@ Output instructions:
    - Provide only the modified text or refactored code as your response
    - Do not include any explanations, comments, or additional information
    - Do not wrap the response in any format or quotations or anything of the sort
+   - Respect the original indentation and spacing unless specified otherwise

@@ -35,9 +35,8 @@
  doom-font (font-spec :family "Iosevka SS04" :size 18 :weight 'regular)
  doom-big-font (font-spec :family "Iosevka SS04" :size 24 :weight 'regular))
 
-;; (setq doom-theme 'doom-oceanic-next)
+(setq doom-theme 'doom-oceanic-next)
 ;; (setq doom-theme 'doom-gruvbox)
-(setq doom-theme 'ef-owl)
 
 (add-hook! display-line-numbers-mode
   (custom-set-faces!
@@ -344,7 +343,7 @@
         lsp-solargraph-symbols nil
         lsp-solargraph-folding nil
         lsp-enabled-clients '()
-        lsp-disabled-clients '(emmet-ls ruby-ls)
+        lsp-disabled-clients '(emmet-ls rubocop-ls)
         lsp-ui-sideline-show-code-actions t))
 
 ;; Org mode
@@ -421,34 +420,6 @@
 
 ;; Gptel
 
-(defun gptel-load-directives-from-files (directory)
-  (let ((directives '()))
-    (dolist (file (directory-files directory t "\\.txt$"))
-      (let* ((filename (file-name-nondirectory file))
-             (key (file-name-sans-extension filename))
-             (content (with-temp-buffer
-                        (insert-file-contents file)
-                        (buffer-string))))
-        ;; Convert key to symbol and add the pair to our directives list
-        (push (cons (intern key) content) directives)))
-    directives))
-
-(defun gptel-send-with-options ()
-  (interactive)
-  (let ((current-prefix-arg 4)) ;; emulate C-u
-    (call-interactively 'gptel-send)))
-
-(defun gptel-read-documentation (symbol)
-  "Read the documentation for SYMBOL, which can be a function or variable."
-  (let ((sym (intern symbol)))
-    (cond
-     ((fboundp sym)
-      (documentation sym))
-     ((boundp sym)
-      (documentation-property sym 'variable-documentation))
-     (t
-      (format "No documentation found for %s" symbol)))))
-
 (use-package! gptel
   :defer 5
   :config
@@ -459,10 +430,31 @@
                                     (text-mode . "->"))
         gptel-directives (gptel-load-directives-from-files (concat doom-user-dir "gptel-directives/"))
         gptel-temperature 0.5
-        gptel-model 'claude-sonnet-4-5-20250929
+        gptel-use-context 'user
+        gptel-model 'claude-opus-4-5-20251101
         gptel-backend (gptel-make-anthropic "Claude"
                         :stream t :key (getenv "CLAUDE_API_KEY")))
 
+  (gptel-make-anthropic "Claude-thinking" 
+    :key (getenv "CLAUDE_API_KEY")
+    :stream t
+    :request-params '(:thinking (:type "enabled" :budget_tokens 2048)
+                      :max_tokens 4096))
+  
+  (gptel-make-preset 'refactoring
+    :description "Preset for refactoring text"
+    :backend "Claude"
+    :model 'claude-haiku-4-5-20251001
+    :system 'refactor
+    :temperature 0.2)
+
+  (gptel-make-preset 'rails-coding
+    :description "Preset for writing and debugging rails code"
+    :backend "Claude-thinking"
+    :model 'claude-opus-4-5-20251101
+    :system 'rails-expert
+    :temperature 1.0)
+  
   (add-to-list 'gptel-tools
                (gptel-make-tool
                 :function (lambda (url)
@@ -489,6 +481,34 @@
                               :type string
                               :description "The name of the function or variable whose documentation is to be retrieved"))
                 :category "emacs"))
+
+  (defun gptel-load-directives-from-files (directory)
+    (let ((directives '()))
+      (dolist (file (directory-files directory t "\\.txt$"))
+        (let* ((filename (file-name-nondirectory file))
+               (key (file-name-sans-extension filename))
+               (content (with-temp-buffer
+                          (insert-file-contents file)
+                          (buffer-string))))
+          (push (cons (intern key) content) directives)))
+      directives))
+
+  (defun gptel-send-with-options ()
+    (interactive)
+    (let ((current-prefix-arg 4)) ;; emulate C-u
+      (call-interactively 'gptel-send)))
+
+  (defun gptel-read-documentation (symbol)
+    "Read the documentation for SYMBOL, which can be a function or variable."
+    (let ((sym (intern symbol)))
+      (cond
+       ((fboundp sym)
+        (documentation sym))
+       ((boundp sym)
+        (documentation-property sym 'variable-documentation))
+       (t
+        (format "No documentation found for %s" symbol)))))
+
 
   (map! :leader :desc "Gptel" "r")
   (map! :leader :desc "Gptel Send" "rs" #'gptel-send-with-options)
