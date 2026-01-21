@@ -445,10 +445,13 @@
         gptel-directives (gptel-load-directives-from-files (concat doom-user-dir "gptel-directives/"))
         gptel-temperature 0.5
         gptel-use-context 'user
-        gptel-model 'claude-opus-4-5-20251101
-        gptel-backend (gptel-make-anthropic "Claude"
-                        :stream t :key (getenv "CLAUDE_API_KEY")))
+        gptel-model 'gemini-3-pro-preview
+        gptel-backend (gptel-make-gemini "Gemini"
+                        :stream t :key (getenv "GEMINI_API_KEY")))
 
+  (gptel-make-anthropic "Claude"
+    :stream t :key (getenv "CLAUDE_API_KEY"))
+  
   (gptel-make-anthropic "Claude-thinking" 
     :key (getenv "CLAUDE_API_KEY")
     :stream t
@@ -457,22 +460,20 @@
   
   (gptel-make-preset 'refactoring
     :description "Preset for refactoring text"
-    :backend "Claude"
-    :model 'claude-haiku-4-5-20251001
+    :backend "Gemini"
+    :model 'gemini-flash-latest
     :system 'refactor
     :temperature 0.2)
 
   (gptel-make-preset 'rails-coding
     :description "Preset for writing and debugging rails code"
-    :backend "Claude-thinking"
-    :model 'claude-opus-4-5-20251101
+    :backend "Gemini"
     :system 'rails-expert
     :temperature 1.0)
   
   (gptel-make-preset 'go-coding
     :description "Preset for writing and debugging go code"
-    :backend "Claude-thinking"
-    :model 'claude-opus-4-5-20251101
+    :backend "Gemini"
     :system 'go-expert
     :temperature 1.0)
   
