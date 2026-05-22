@@ -180,14 +180,14 @@
 (after! magit
   (remove-hook 'server-switch-hook 'magit-commit-diff)
 
-  (setq magit-section-visibility-indicator '(" ▾")
-        git-commit-style-convention-checks '(non-empty-second-line)
+  (setq git-commit-style-convention-checks '(non-empty-second-line)
         magit-process-finish-apply-ansi-colors t
         magit-diff-highlight-indentation nil
         magit-diff-paint-whitespace nil
         magit-diff-refine-hunk nil)
 
   ;; (evil-set-initial-state 'magit-status-mode 'emacs)
+  (add-hook 'magit-mode-hook (lambda () (setq left-fringe-width 20)))
   (add-hook 'magit-section-mode-hook (lambda () (setq whitespace-style nil))))
 
 (map! :leader :desc "Toggle Zen Mode" "z" #'+zen/toggle)
@@ -341,13 +341,13 @@
 
 ;; Improve LSP
 (after! lsp-mode
-  (require 'lsp-solargraph)
   (setq lsp-auto-guess-root t
-        lsp-solargraph-symbols nil
-        lsp-solargraph-folding nil
-        lsp-enabled-clients '()
-        lsp-disabled-clients '(emmet-ls rubocop-ls)
+        lsp-enabled-clients '(ruby-lsp-ls)
+        lsp-disabled-clients '(emmet-ls rubocop-ls solargraph-ls)
         lsp-ui-sideline-show-code-actions t))
+
+(after! lsp-ruby-lsp
+  (setq lsp-ruby-lsp-use-bundler t))
 
 ;; Org mode
 
